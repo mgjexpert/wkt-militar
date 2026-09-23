@@ -6,7 +6,7 @@ import { z } from "zod";
 const requestSchema = z.object({
   name: z.string().min(2),
   email: z.string().email(),
-  document: z.string().optional(),
+  document: z.string().min(11).max(18),
 });
 
 export async function POST(request: Request) {
@@ -14,6 +14,7 @@ export async function POST(request: Request) {
     const input = requestSchema.parse(await request.json());
     const charge = await createPixCharge({
       ...input,
+      document: input.document.replace(/\D/g, ""),
       amountCents: 6700,
       externalId: `wkt_${randomUUID()}`,
     });
