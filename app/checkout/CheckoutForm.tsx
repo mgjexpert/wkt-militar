@@ -44,7 +44,7 @@ export function CheckoutForm() {
           <h2>Pagamento via PIX</h2>
           <label>Nome<input name="name" required placeholder="Seu nome"/></label>
           <label>E-mail<input name="email" type="email" required placeholder="voce@email.com"/></label>
-          <label>CPF<input name="document" inputMode="numeric" placeholder="Somente números"/></label>
+          <label>CPF/CNPJ<input name="document" inputMode="numeric" required placeholder="Somente números"/></label>
           {error && <div className="error">{error}</div>}
           <button className="button full" disabled={loading}>{loading ? "Gerando PIX..." : "Gerar PIX • R$ 67"}</button>
           <small>O checkout está em modo mock até ligarmos as credenciais S2S da XPayments.</small>
