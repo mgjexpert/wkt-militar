@@ -3,7 +3,7 @@ import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
-import { getDb } from "@/lib/db";
+import { ensurePaymentSchema, getDb } from "@/lib/db";
 import { orders, users } from "@/lib/db/schema";
 import { createPixCharge } from "@/lib/payments/xpayments";
 
@@ -42,6 +42,10 @@ export async function POST(request: Request) {
         { error: "Checkout temporariamente indisponível: banco de dados não configurado." },
         { status: 503 }
       );
+    }
+
+    if (db) {
+      await ensurePaymentSchema();
     }
 
     const amountCents = configuredPriceCents();

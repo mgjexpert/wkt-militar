@@ -2,7 +2,7 @@ import { and, eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
-import { getDb } from "@/lib/db";
+import { ensurePaymentSchema, getDb } from "@/lib/db";
 import { entitlements, orders } from "@/lib/db/schema";
 
 const webhookSchema = z.object({
@@ -20,6 +20,13 @@ export async function POST(request: Request) {
   const db = getDb();
   if (!db) {
     console.error("xpayments_webhook_database_missing");
+    return NextResponse.json({ received: false }, { status: 503 });
+  }
+
+  try {
+    await ensurePaymentSchema();
+  } catch (error) {
+    console.error("xpayments_webhook_schema_error", error);
     return NextResponse.json({ received: false }, { status: 503 });
   }
 
@@ -59,8 +66,6 @@ export async function POST(request: Request) {
     return NextResponse.json({ received: false }, { status: 409 });
   }
 
-  // The current XPayments webhook example reports amount in BRL major units
-  // (e.g. 5 for a R$5 payment), while charge creation uses minor units.
   const webhookAmountCents = Math.round(payload.amount * 100);
   if (webhookAmountCents !== order.amountCents) {
     console.error("xpayments_webhook_amount_mismatch", {
