@@ -34,6 +34,10 @@ export function drivePreviewUrl(fileId: string) {
   return `https://drive.google.com/file/d/${fileId}/preview`;
 }
 
+export function driveThumbnailUrl(fileId: string, width = 1200) {
+  return `https://drive.google.com/thumbnail?id=${fileId}&sz=w${width}`;
+}
+
 export function getWorkout(slug: string) {
   return workouts.find((workout) => workout.slug === slug);
 }
